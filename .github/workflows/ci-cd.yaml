@@ -68,10 +68,10 @@ jobs:
           # Busca la línea 'image:' en deployment.yaml y reemplaza con la nueva imagen y tag
           sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:${{ github.sha }}|g" deployment.yaml
           
-#      # 8. Desplegar a GKE
-#      - name: Deploy to GKE
-#        run: |
-#          # Aplica el manifiesto actualizado a tu clúster
-#          kubectl apply -f deployment.yaml
-#          # Verifica el estado del rollout
-#          kubectl rollout status deployment/${{ env.K8S_DEPLOYMENT_NAME }}
+      # Desplegar a GKE
+      - name: Deploy to GKE
+        run: |
+          # Aplica el manifiesto actualizado a tu clúster
+          kubectl apply -f deployment.yaml
+          # Verifica el estado del rollout
+          kubectl rollout status deployment/${{ env.K8S_DEPLOYMENT_NAME }}
