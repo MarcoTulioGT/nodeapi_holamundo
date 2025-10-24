@@ -15,7 +15,7 @@ env:
   GKE_CLUSTER: ${{ vars.GKE_CLUSTER }}
   GKE_ZONE: ${{ vars.GKE_ZONE }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/nodeapi_holamundo
-  K8S_DEPLOYMENT_NAME: nodeapi-holamundo_deployment
+  K8S_DEPLOYMENT_NAME: nodeapi-holamundo-deployment
 
 jobs:
   build-push-deploy:
