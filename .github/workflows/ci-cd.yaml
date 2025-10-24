@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  contents: read      # Permiso básico para leer el código
+  contents: read
   packages: write
 
 env:
