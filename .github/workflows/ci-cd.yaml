@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read      # Permiso básico para leer el código
+  packages: write
+  
 env:
   PROJECT_ID: ${{ vars.GCP_PROJECT }}
   GKE_CLUSTER: ${{ vars.GKE_CLUSTER }}
