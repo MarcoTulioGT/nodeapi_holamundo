@@ -1,10 +1,10 @@
-# 1. Deployment: Define cómo se ejecutan los pods
+# Deployment: Define cómo se ejecutan los pods
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-api-deployment
+  name: nodeapi-holamundo_deployment
 spec:
-  replicas: 2 # Cuántas instancias mantener
+  replicas: 2 
   selector:
     matchLabels:
       app: node-api
@@ -14,14 +14,14 @@ spec:
         app: node-api
     spec:
       containers:
-      - name: node-api-container
+      - name: nodeapi-holamundo-container
         image: ghcr.io/[usuario_github]/[nombre_repo]/node-api:latest
         ports:
-        - containerPort: 8080 # Puerto interno del contenedor
+        - containerPort: 8080 
 
---- # Separador de documentos YAML
+--- 
 
-# 2. Service: Define cómo acceder al Deployment
+# Service: Define cómo acceder al Deployment
 apiVersion: v1
 kind: Service
 metadata:
