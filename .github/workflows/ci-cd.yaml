@@ -49,9 +49,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/${{ github.repository | lower }}/nodeapi_holamundo:${{ github.sha }}
-            ghcr.io/${{ github.repository | lower }}/nodeapi_holamundo:latest
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}, ${{ env.IMAGE_NAME }}:latest
+            
 #      # 6. Obtener credenciales de GKE
 #      - name: Get GKE Credentials
 #        uses: google-github-actions/get-gke-credentials@v2
