@@ -4,26 +4,25 @@ name: Node.js API CI/CD a GKE
 on:
   push:
     branches:
-      - main # Dispara el workflow en cada push a la rama principal
+      - main
 
 env:
-  PROJECT_ID: [TU_ID_DE_PROYECTO_GCP]
-  GKE_CLUSTER: [NOMBRE_DE_TU_CLUSTER_GKE]
-  GKE_ZONE: [ZONA_DE_TU_CLUSTER]
-  # El paquete de GitHub Packages usa esta URL
-  IMAGE_NAME: ghcr.io/${{ github.repository }}/node-api
-  K8S_DEPLOYMENT_NAME: node-api-deployment
+  PROJECT_ID: ${{ vars.GCP_PROJECT }}
+  GKE_CLUSTER: ${{ vars.GKE_CLUSTER }}
+  GKE_ZONE: ${{ vars.GKE_ZONE }}
+  IMAGE_NAME: ghcr.io/${{ github.repository }}/nodeapi_holamundo
+  K8S_DEPLOYMENT_NAME: nodeapi-holamundo_deployment
 
 jobs:
   build-push-deploy:
     runs-on: ubuntu-latest
     steps:
 
-      # 1. Checkout: Descarga el código del repositorio
+      # Checkout: Descarga el código del repositorio
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Autenticación en Google Cloud
+      # Autenticación en Google Cloud
       # Se requiere haber configurado previamente una Service Account de GCP
       - name: Authenticate Google Cloud
         uses: google-github-actions/auth@v2
@@ -31,7 +30,7 @@ jobs:
           # Usa un secreto de GitHub (Settings -> Secrets)
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      # 3. Autenticación en GitHub Packages (GHCR)
+      # Autenticación en GitHub Packages (GHCR)
       - name: Log into GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -40,11 +39,11 @@ jobs:
           # Token para autenticación en GHCR
           password: ${{ secrets.GITHUB_TOKEN }} 
           
-      # 4. Configurar Docker Buildx (Herramienta de Docker)
+      # Configurar Docker Buildx (Herramienta de Docker)
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         
-      # 5. Construir y Subir la Imagen a GitHub Packages (GHCR)
+      # Construir y Subir la Imagen a GitHub Packages (GHCR)
       - name: Build and Push Docker image to GHCR
         uses: docker/build-push-action@v5
         with:
@@ -52,23 +51,23 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}, ${{ env.IMAGE_NAME }}:latest # Sube con tag sha y latest
 
-      # 6. Obtener credenciales de GKE
-      - name: Get GKE Credentials
-        uses: google-github-actions/get-gke-credentials@v2
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_ZONE }}
+#      # 6. Obtener credenciales de GKE
+#      - name: Get GKE Credentials
+#        uses: google-github-actions/get-gke-credentials@v2
+#        with:
+#          cluster_name: ${{ env.GKE_CLUSTER }}
+#          location: ${{ env.GKE_ZONE }}
           
-      # 7. Actualizar el Manifiesto K8s con la nueva imagen (la de GHCR)
-      - name: Update K8s Manifest with new image tag
-        run: |
-          # Busca la línea 'image:' en deployment.yaml y reemplaza con la nueva imagen y tag
-          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:${{ github.sha }}|g" deployment.yaml
+#      # 7. Actualizar el Manifiesto K8s con la nueva imagen (la de GHCR)
+#      - name: Update K8s Manifest with new image tag
+#        run: |
+#          # Busca la línea 'image:' en deployment.yaml y reemplaza con la nueva imagen y tag
+#          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:${{ github.sha }}|g" deployment.yaml
           
-      # 8. Desplegar a GKE
-      - name: Deploy to GKE
-        run: |
-          # Aplica el manifiesto actualizado a tu clúster
-          kubectl apply -f deployment.yaml
-          # Verifica el estado del rollout
-          kubectl rollout status deployment/${{ env.K8S_DEPLOYMENT_NAME }}
+#      # 8. Desplegar a GKE
+#      - name: Deploy to GKE
+#        run: |
+#          # Aplica el manifiesto actualizado a tu clúster
+#          kubectl apply -f deployment.yaml
+#          # Verifica el estado del rollout
+#          kubectl rollout status deployment/${{ env.K8S_DEPLOYMENT_NAME }}
