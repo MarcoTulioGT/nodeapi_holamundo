@@ -9,7 +9,7 @@ on:
 permissions:
   contents: read      # Permiso básico para leer el código
   packages: write
-  
+
 env:
   PROJECT_ID: ${{ vars.GCP_PROJECT }}
   GKE_CLUSTER: ${{ vars.GKE_CLUSTER }}
@@ -55,18 +55,18 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}, ${{ env.IMAGE_NAME }}:latest
             
-#      # 6. Obtener credenciales de GKE
-#      - name: Get GKE Credentials
-#        uses: google-github-actions/get-gke-credentials@v2
-#        with:
-#          cluster_name: ${{ env.GKE_CLUSTER }}
-#          location: ${{ env.GKE_ZONE }}
+      # Obtener credenciales de GKE
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
           
-#      # 7. Actualizar el Manifiesto K8s con la nueva imagen (la de GHCR)
-#      - name: Update K8s Manifest with new image tag
-#        run: |
-#          # Busca la línea 'image:' en deployment.yaml y reemplaza con la nueva imagen y tag
-#          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:${{ github.sha }}|g" deployment.yaml
+      # Actualizar el Manifiesto K8s con la nueva imagen (la de GHCR)
+      - name: Update K8s Manifest with new image tag
+        run: |
+          # Busca la línea 'image:' en deployment.yaml y reemplaza con la nueva imagen y tag
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}:${{ github.sha }}|g" deployment.yaml
           
 #      # 8. Desplegar a GKE
 #      - name: Deploy to GKE
