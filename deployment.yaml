@@ -1,0 +1,36 @@
+# 1. Deployment: Define cómo se ejecutan los pods
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-api-deployment
+spec:
+  replicas: 2 # Cuántas instancias mantener
+  selector:
+    matchLabels:
+      app: node-api
+  template:
+    metadata:
+      labels:
+        app: node-api
+    spec:
+      containers:
+      - name: node-api-container
+        image: ghcr.io/[usuario_github]/[nombre_repo]/node-api:latest
+        ports:
+        - containerPort: 8080 # Puerto interno del contenedor
+
+--- # Separador de documentos YAML
+
+# 2. Service: Define cómo acceder al Deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-api-service
+spec:
+  type: LoadBalancer # Usa LoadBalancer para obtener una IP pública en GKE
+  selector:
+    app: node-api # Coincide con la etiqueta del Deployment
+  ports:
+    - protocol: TCP
+      port: 80 # Puerto público del servicio
+      targetPort: 8080 # Puerto interno al que se dirige (el del contenedor)
